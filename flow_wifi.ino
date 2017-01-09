@@ -46,7 +46,6 @@ void setup()
 {
   initHardware();
   connectWiFi();
-  digitalWrite(LED_PIN, HIGH);
 }
 
 void loop() 
