@@ -1,18 +1,18 @@
  
-volatile float RiseEdge; //measuring the rising edge of the signal
+volatile float RiseCount; //measuring the rising edge of the signal
 float cal;
 float counter=0;
 float sum=0;
 float total=0;
+
 int state = 0;
 int use=1;
-int hallsensor = 2; //pin location of sensor output
+#define hallsensor D0 //pin location of sensor output
 
 
 void rpm ()//this is the function that the interrupt calls
 {
-  RiseEdge++;// this function measure the rising and falling edge if the Hall sensor
-  
+  RiseCount++;// this function measure the rising and falling edge if the Hall sensor  
 }
 
 void disp ()
@@ -38,13 +38,13 @@ void setup()
   
 void loop() {
  
-  RiseEdge = 0;//set RiseEdge to 0
+  RiseCount = 0;//set RiseCount to 0
 
   sei();        //enable interrupt
   delay(1000);  //wait 1 second
   cli();        //disable interrupt
 
-  cal = (RiseEdge*2.1909);
+  cal = (RiseCount*2.1909);
 
   if(Serial.available() > 0)  // Checks whether data is comming from the serial port
   { 
