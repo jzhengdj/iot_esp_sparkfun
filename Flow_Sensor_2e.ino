@@ -32,6 +32,7 @@ void setup()
   pinMode(hallsensor, INPUT);//initialise Hallsensor Pin as input
   Serial.begin(9600);//set up for the serial port
   attachInterrupt(hallsensor, countRise, RISING);//Attach interrupt to HallSensor output.  
+  delay(100);
 }
 
 void loop() {
@@ -60,4 +61,3 @@ void loop() {
   }
 
 }
-
