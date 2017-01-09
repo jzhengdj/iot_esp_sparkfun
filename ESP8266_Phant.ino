@@ -1,5 +1,5 @@
 // Include the ESP8266 WiFi library. (Works a lot like the
-// Arduino WiFi library.)
+// Arduino WiFi library.
 #include <ESP8266WiFi.h>
 // Include the SparkFun Phant library.
 #include <Phant.h>
