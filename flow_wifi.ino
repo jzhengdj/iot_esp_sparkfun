@@ -13,8 +13,8 @@ const char WiFiPSK[] = "Rigel6288";
 /////////////////////
 // Pin Definitions //
 /////////////////////
-#define LED_PIN LED_BUILTIN
-#define hallsensor D3 // Wemos D0 D4 cannot use interrupt.
+#define LED_PIN LED_BUILTIN // Wemos D4
+#define hallsensor D3 // Wemos D0 cannot use interrupt.
 
 ////////////////
 // Phant Keys //
@@ -38,7 +38,7 @@ long flowDuration = 0;
 /////////////////
 // Post Timing //
 /////////////////
-const unsigned long postRate = 30000;
+const unsigned long postRate = 10000;
 unsigned long lastPost = 0;
 
 
@@ -62,15 +62,19 @@ void loop()
   {
     flowSum+=flowAmount;
     flowDuration++;
+    if (flowDuration >= 60) post();
     //disp();
   }
   else if(flowSum!=0)
   {
+    post();
+    /*
     postToPhant();
     useCount++;
     flowDuration=0;
     flowSum=0;
-  }
+    */
+    
   /*
   if (lastPost + postRate <= millis())
   {
@@ -126,6 +130,23 @@ void initHardware()
   // that's all it can be.
 }
 
+void post()
+{
+  if (lastPost + postRate <= millis())
+    {
+      if (postToPhant())
+        lastPost = millis();
+      else
+        do{
+          delay(100);
+          lastPost = millis();
+        } while (!postToPhant());
+      flowDuration = 0;
+      flowSum = 0;
+    }
+    useCount++;
+}
+
 int postToPhant()
 {
   // LED turns on when we enter, it'll go off when we 
@@ -142,7 +163,7 @@ int postToPhant()
   String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
                  String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
   macID.toUpperCase();
-  String postedID = "Jz_IoT_Thing-" + macID;
+  String postedID = "Jz_Thing-" + macID;
   
   // Add the four field/value pairs defined by our stream:
   phant.add("id", postedID);
