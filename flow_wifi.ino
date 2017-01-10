@@ -20,8 +20,8 @@ const char WiFiPSK[] = "Rigel6288";
 // Phant Keys //
 ////////////////
 const char PhantHost[] = "data.sparkfun.com";
-const char PublicKey[] = "wpvZ9pE1qbFJAjaGd3bn";
-const char PrivateKey[] = "wzeB1z0xWNt1YJX27xdg";
+const char PublicKey[] = "dZ9J0p0jdLHmq79mvEYj";
+const char PrivateKey[] = "eEJ12a2jBoCWDAqWdz6V";
 
 
 /////////////////////
@@ -41,6 +41,14 @@ long flowDuration = 0;
 const unsigned long postRate = 10000;
 unsigned long lastPost = 0;
 
+///////////////
+// Functions //
+///////////////
+void initHardware();
+void connectWiFi();
+void checkPost();
+int postToPhant();
+void countRise();
 
 void setup() 
 {
@@ -62,12 +70,12 @@ void loop()
   {
     flowSum+=flowAmount;
     flowDuration++;
-    if (flowDuration >= 60) post();
-    //disp();
+    if (flowDuration >= 60) checkPost();
   }
   else if(flowSum!=0)
-  {
-    post();
+    checkPost();
+
+  delay(5);
     /*
     postToPhant();
     useCount++;
@@ -84,6 +92,21 @@ void loop()
       delay(100);    
   }
   */
+}
+
+void initHardware()
+{
+  Serial.begin(9600);
+  //pinMode(DIGITAL_PIN, INPUT_PULLUP);
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
+
+  //initialise Hallsensor Pin as input, then attach interrupt
+  pinMode(hallsensor, INPUT);
+  attachInterrupt(hallsensor, countRise, RISING);  
+  delay(100);
+  // Don't need to set ANALOG_PIN as input, 
+  // that's all it can be.
 }
 
 void connectWiFi()
@@ -113,34 +136,28 @@ void connectWiFi()
     // Add delays -- allowing the processor to perform other
     // tasks -- wherever possible.
   }
-}
-
-void initHardware()
-{
-  Serial.begin(9600);
-  //pinMode(DIGITAL_PIN, INPUT_PULLUP);
-  pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH);
-
-  //initialise Hallsensor Pin as input, then attach interrupt
-  pinMode(hallsensor, INPUT);
-  attachInterrupt(hallsensor, countRise, RISING);  
-  delay(100);
-  // Don't need to set ANALOG_PIN as input, 
-  // that's all it can be.
 }
 
-void post()
+void countRise()//this is the function that the interrupt calls
+{
+  riseCount++;// this function measure the rising and falling edge if the Hall sensor  
+}
+
+
+
+void checkPost()
 {
   if (lastPost + postRate <= millis())
     {
       if (postToPhant())
         lastPost = millis();
       else
-        do{
+        while(1){
           delay(100);
           lastPost = millis();
-        } while (!postToPhant());
+          if (postToPhant()) break;
+        } 
       flowDuration = 0;
       flowSum = 0;
     }
@@ -167,9 +184,9 @@ int postToPhant()
   
   // Add the four field/value pairs defined by our stream:
   phant.add("id", postedID);
-  phant.add("analog", (int)flowSum);//analogRead(ANALOG_PIN));
-  phant.add("digital", flowDuration);//digitalRead(DIGITAL_PIN));
-  phant.add("time", millis());
+  phant.add("amount", (int)flowSum);//analogRead(ANALOG_PIN));
+  phant.add("duration", flowDuration);//digitalRead(DIGITAL_PIN));
+  phant.add("counter", useCount);
   
   // Now connect to data.sparkfun.com, and post our data:
   WiFiClient client;
