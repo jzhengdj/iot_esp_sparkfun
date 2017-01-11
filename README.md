@@ -6,10 +6,9 @@
 
 
 
+
+
 [Sparkfun testing stream](https://data.sparkfun.com/streams/wpvZ9pE1qbFJAjaGd3bn)
-
 const char PhantHost[] = "data.sparkfun.com";
-
 const char PublicKey[] = "wpvZ9pE1qbFJAjaGd3bn";
-
 const char PrivateKey[] = "wzeB1z0xWNt1YJX27xdg";
