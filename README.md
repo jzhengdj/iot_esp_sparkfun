@@ -6,8 +6,10 @@
 
 
 
+[Stream for this project](https://data.sparkfun.com/streams/dZ9J0p0jdLHmq79mvEYj)
 
 
+For testing.
 [Sparkfun testing stream](https://data.sparkfun.com/streams/wpvZ9pE1qbFJAjaGd3bn)  
 const char PhantHost[] = "data.sparkfun.com";  
 const char PublicKey[] = "wpvZ9pE1qbFJAjaGd3bn";  
