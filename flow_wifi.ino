@@ -58,6 +58,11 @@ void setup()
 
 void loop() 
 {
+  if (WiFi.status() != WL_CONNECTED) {
+    delay(1);
+    connectWiFi();
+  }
+  
   riseCount = 0;//set RiseCount to 0
 
   sei();        //enable interrupt
