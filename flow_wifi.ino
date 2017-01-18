@@ -58,10 +58,6 @@ void setup()
 
 void loop() 
 {
-  if (WiFi.status() != WL_CONNECTED) {
-    delay(1);
-    connectWiFi();
-  }
   
   riseCount = 0;//set RiseCount to 0
 
@@ -153,6 +149,11 @@ void countRise()//this is the function that the interrupt calls
 
 void checkPost()
 {
+  if (WiFi.status() != WL_CONNECTED) {
+    delay(1);
+    connectWiFi();
+  }
+  
   if (lastPost + postRate <= millis())
     {
       if (postToPhant())
